@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Evita barras de rolagem desnecessárias */
+            overflow: hidden; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -43,9 +43,9 @@
             50% { transform: translateY(-15px); }
         }
         .envelope {
-            width: 300px; /* Aumentado para melhor visibilidade */
-            height: 200px; /* Aumentado */
-            background-color: #f0e6d2; /* Cor de envelope mais clara */
+            width: 300px; 
+            height: 200px; 
+            background-color: #f0e6d2; 
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
@@ -59,7 +59,7 @@
             height: 0;
             border-left: 150px solid transparent;
             border-right: 150px solid transparent;
-            border-top: 100px solid #e0cbae; /* Cor da aba um pouco mais escura */
+            border-top: 100px solid #e0cbae; 
             position: absolute;
             top: 0;
             left: 0;
@@ -74,7 +74,7 @@
             position: absolute;
             bottom:0;
         }
-         .envelope-body::before { /* Linha simulando a parte de trás do envelope */
+         .envelope-body::before { 
             content: '';
             position: absolute;
             top: 0;
@@ -82,7 +82,7 @@
             width: 100%;
             height: 100%;
             border-radius: 10px;
-            border: 1px solid #d4c0a1; /* Borda sutil */
+            border: 1px solid #d4c0a1; 
         }
 
 
@@ -96,7 +96,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            z-index: 1; /* Para ficar sobre a aba */
+            z-index: 1; 
             top: 45%; 
             left: 50%;
             transform: translate(-50%, -50%) scale(1);
@@ -106,16 +106,16 @@
             transform: translate(-50%, -50%) scale(1.1);
         }
         
-        /* Estilo para a imagem do lírio no selo */
+    
         .seal-lily-image {
-            width: 40px; /* Tamanho da imagem do lírio no selo */
+            width: 40px; 
             height: 40px;
-            object-fit: cover; /* Garante que a imagem cubra a área, pode cortar se não for quadrada */
-            border-radius: 50%; /* Torna a própria imagem circular, para um efeito de emblema */
+            object-fit: cover; 
+            border-radius: 50%;
         }
 
         .envelope-container.opened .envelope {
-            transform: translateY(-150vh) rotate(15deg); /* Animação de saída mais dinâmica */
+            transform: translateY(-150vh) rotate(15deg); 
             opacity: 0;
         }
         .envelope-container.opened .envelope-flap {
@@ -132,24 +132,24 @@
             width: 90%;
             max-width: 450px; 
             padding: 40px; 
-            background-color: #fffaf0; /* Cor de papel antigo */
+            background-color: #fffaf0; 
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             text-align: center;
             opacity: 0;
             transform: translateY(50px) scale(0.9);
-            transition: opacity 0.8s ease-out 0.5s, transform 0.8s ease-out 0.5s; /* Delay para aparecer após envelope */
+            transition: opacity 0.8s ease-out 0.5s, transform 0.8s ease-out 0.5s; 
             z-index: 5;
-            pointer-events: none; /* Inicialmente não interativo */
+            pointer-events: none; 
         }
         .letter-container.visible {
             opacity: 1;
             transform: translateY(0) scale(1);
-            pointer-events: auto; /* Torna interativo quando visível */
+            pointer-events: auto; 
         }
         .letter-container p {
             font-size: 3.2rem; 
-            color: #5a3a22; /* Marrom escuro para o texto */
+            color: #5a3a22; 
             margin-bottom: 35px; 
             line-height: 1.4;
         }
@@ -164,7 +164,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .sim-button {
-            background-color: #2ecc71; /* Verde */
+            background-color: #2ecc71; 
             color: white;
         }
         .sim-button:hover {
@@ -172,9 +172,9 @@
             transform: translateY(-2px);
         }
         .nao-button {
-            background-color: #e74c3c; /* Vermelho */
+            background-color: #e74c3c; 
             color: white;
-            position: relative; /* Para movimento */
+            position: relative; 
         }
         .nao-button:hover {
             background-color: #c0392b;
@@ -227,7 +227,7 @@
         }
         .popup-content button {
             padding: 10px 25px; 
-            background-color: #3498db; /* Azul */
+            background-color: #3498db; 
             color: white;
             border: none;
             border-radius: 8px;
@@ -239,7 +239,7 @@
             background-color: #2980b9;
         }
 
-        /* Responsividade */
+        /* responsividadezuda */
         @media (max-width: 600px) {
             .envelope {
                 width: 240px;
@@ -254,7 +254,7 @@
                 width: 40px;
                 height: 40px;
             }
-            .seal-lily-image { /* Ajuste para telas menores se necessário */
+            .seal-lily-image { 
                 width: 30px;
                 height: 30px;
             }
@@ -314,7 +314,7 @@
 
     <script>
         const envelopeContainer = document.getElementById('envelopeContainer');
-        const seal = document.getElementById('seal'); // O elemento 'seal' em si
+        const seal = document.getElementById('seal'); 
         const letterContainer = document.getElementById('letterContainer');
         const simButton = document.getElementById('simButton');
         const naoButton = document.getElementById('naoButton');
@@ -325,15 +325,15 @@
 
         let naoMessageTimeout;
 
-        // O evento de clique continua no selo (o div vermelho)
+        
         seal.addEventListener('click', () => {
             envelopeContainer.classList.add('opened');
-            // Pausa a animação de 'bobbing'
+            
             envelopeContainer.style.animationPlayState = 'paused';
             
             setTimeout(() => {
                 letterContainer.classList.add('visible');
-            }, 700); // Delay para a carta aparecer após o envelope sumir
+            }, 700); 
         });
 
         simButton.addEventListener('click', () => {
@@ -345,7 +345,7 @@
             popupOverlay.classList.remove('visible');
         });
 
-        // Fecha o popup se clicar fora da caixa de mensagem
+        
         popupOverlay.addEventListener('click', (event) => {
             if (event.target === popupOverlay) {
                 popupOverlay.classList.remove('visible');
@@ -353,7 +353,7 @@
         });
 
         naoButton.addEventListener('mouseover', moveNaoButton);
-        naoButton.addEventListener('click', moveNaoButton); // Também move ao clicar
+        naoButton.addEventListener('click', moveNaoButton); 
 
         function moveNaoButton() {
             const letterRect = letterContainer.getBoundingClientRect();
