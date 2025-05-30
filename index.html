@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Pedido Especial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=League+Script&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Evita barras de rolagem desnecessárias */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .background-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1696128672709-a995b6dd531a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8'); 
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            z-index: -1;
+        }
+        .league-script {
+            font-family: 'League Script', cursive;
+        }
+        .envelope-container {
+            position: relative;
+            cursor: pointer;
+            animation: bobbing 2s infinite ease-in-out;
+            z-index: 10;
+        }
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .envelope {
+            width: 300px; /* Aumentado para melhor visibilidade */
+            height: 200px; /* Aumentado */
+            background-color: #f0e6d2; /* Cor de envelope mais clara */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+        }
+        .envelope-flap {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #e0cbae; /* Cor da aba um pouco mais escura */
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top center;
+            transition: transform 0.5s ease-in-out;
+        }
+        .envelope-body {
+            width: 300px;
+            height: 200px;
+            background-color: #f0e6d2;
+            border-radius: 0 0 10px 10px;
+            position: absolute;
+            bottom:0;
+        }
+         .envelope-body::before { /* Linha simulando a parte de trás do envelope */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            border: 1px solid #d4c0a1; /* Borda sutil */
+        }
+
+
+        .seal {
+            position: absolute;
+            width: 50px; 
+            height: 50px; 
+            background-color: #b6ff71; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1; /* Para ficar sobre a aba */
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .seal:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        /* Estilo para a imagem do lírio no selo */
+        .seal-lily-image {
+            width: 40px; /* Tamanho da imagem do lírio no selo */
+            height: 40px;
+            object-fit: cover; /* Garante que a imagem cubra a área, pode cortar se não for quadrada */
+            border-radius: 50%; /* Torna a própria imagem circular, para um efeito de emblema */
+        }
+
+        .envelope-container.opened .envelope {
+            transform: translateY(-150vh) rotate(15deg); /* Animação de saída mais dinâmica */
+            opacity: 0;
+        }
+        .envelope-container.opened .envelope-flap {
+            transform: rotateX(180deg);
+        }
+        .envelope-container.opened .seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+
+        .letter-container {
+            position: absolute;
+            width: 90%;
+            max-width: 450px; 
+            padding: 40px; 
+            background-color: #fffaf0; /* Cor de papel antigo */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: opacity 0.8s ease-out 0.5s, transform 0.8s ease-out 0.5s; /* Delay para aparecer após envelope */
+            z-index: 5;
+            pointer-events: none; /* Inicialmente não interativo */
+        }
+        .letter-container.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto; /* Torna interativo quando visível */
+        }
+        .letter-container p {
+            font-size: 3.2rem; 
+            color: #5a3a22; /* Marrom escuro para o texto */
+            margin-bottom: 35px; 
+            line-height: 1.4;
+        }
+        .letter-buttons button {
+            padding: 12px 28px; 
+            margin: 0 12px; 
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3rem; 
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sim-button {
+            background-color: #2ecc71; /* Verde */
+            color: white;
+        }
+        .sim-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .nao-button {
+            background-color: #e74c3c; /* Vermelho */
+            color: white;
+            position: relative; /* Para movimento */
+        }
+        .nao-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        .nao-message {
+            display: none;
+            color: #c0392b;
+            font-size: 1rem;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            z-index: 100;
+        }
+        .popup-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .popup-content {
+            background-color: white;
+            padding: 35px; 
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 450px; 
+            transform: scale(0.8);
+            transition: transform 0.4s ease;
+        }
+        .popup-overlay.visible .popup-content {
+            transform: scale(1);
+        }
+        .popup-content p {
+            font-size: 1.4rem; 
+            color: #333;
+            margin-bottom: 25px; 
+        }
+        .popup-content button {
+            padding: 10px 25px; 
+            background-color: #3498db; /* Azul */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem; 
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .popup-content button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .envelope {
+                width: 240px;
+                height: 160px;
+            }
+            .envelope-flap {
+                border-left-width: 120px;
+                border-right-width: 120px;
+                border-top-width: 80px;
+            }
+            .seal {
+                width: 40px;
+                height: 40px;
+            }
+            .seal-lily-image { /* Ajuste para telas menores se necessário */
+                width: 30px;
+                height: 30px;
+            }
+            .letter-container {
+                padding: 25px;
+            }
+            .letter-container p {
+                font-size: 2.5rem;
+            }
+            .letter-buttons button {
+                padding: 10px 20px;
+                font-size: 1.1rem;
+                margin: 8px;
+            }
+            .letter-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .popup-content p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blur"></div>
+
+    <div id="envelopeContainer" class="envelope-container">
+        <div class="envelope">
+            <div class="envelope-body"></div>
+            <div class="envelope-flap"></div>
+            <div id="seal" class="seal">
+                <img src="https://images.vexels.com/content/265483/preview/lily-flower-cutout-42cf60.png" 
+                    alt="Selo de Lírio" 
+                    class="seal-lily-image"
+                    onerror="this.onerror=null; this.src='https://placehold.co/40x40/f0e6d2/c0392b?text=L&font=sans'; this.style.objectFit='contain';">
+            </div>
+        </div>
+    </div>
+
+    <div id="letterContainer" class="letter-container">
+        <p class="league-script">Aceita namorar comigo, donzela?</p>
+        <div class="letter-buttons">
+            <button id="simButton" class="sim-button">Sim</button>
+            <button id="naoButton" class="nao-button">Não</button>
+        </div>
+        <div id="naoMessageBox" class="nao-message">Oloco, você está certa disso?</div>
+    </div>
+
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content">
+            <p id="popupMessageText">Você fez a escolha certa, agora você tem garantido um estoque infinito de sucrilhos, biceps e muito amor e carinho ❤️!</p>
+            <button id="closePopupButton">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const seal = document.getElementById('seal'); // O elemento 'seal' em si
+        const letterContainer = document.getElementById('letterContainer');
+        const simButton = document.getElementById('simButton');
+        const naoButton = document.getElementById('naoButton');
+        const naoMessageBox = document.getElementById('naoMessageBox');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const closePopupButton = document.getElementById('closePopupButton');
+        const popupMessageText = document.getElementById('popupMessageText');
+
+        let naoMessageTimeout;
+
+        // O evento de clique continua no selo (o div vermelho)
+        seal.addEventListener('click', () => {
+            envelopeContainer.classList.add('opened');
+            // Pausa a animação de 'bobbing'
+            envelopeContainer.style.animationPlayState = 'paused';
+            
+            setTimeout(() => {
+                letterContainer.classList.add('visible');
+            }, 700); // Delay para a carta aparecer após o envelope sumir
+        });
+
+        simButton.addEventListener('click', () => {
+            popupMessageText.innerHTML = "Você fez a escolha certa, agora você tem garantido um estoque infinito de sucrilhos, biceps e muito amor e carinho ❤️!";
+            popupOverlay.classList.add('visible');
+        });
+
+        closePopupButton.addEventListener('click', () => {
+            popupOverlay.classList.remove('visible');
+        });
+
+        // Fecha o popup se clicar fora da caixa de mensagem
+        popupOverlay.addEventListener('click', (event) => {
+            if (event.target === popupOverlay) {
+                popupOverlay.classList.remove('visible');
+            }
+        });
+
+        naoButton.addEventListener('mouseover', moveNaoButton);
+        naoButton.addEventListener('click', moveNaoButton); // Também move ao clicar
+
+        function moveNaoButton() {
+            const letterRect = letterContainer.getBoundingClientRect();
+            const buttonRect = naoButton.getBoundingClientRect();
+
+            const maxX = letterRect.width - buttonRect.width - 20; 
+            const maxY = letterRect.height - buttonRect.height - 20;
+
+            let newX = Math.random() * maxX;
+            let newY = Math.random() * maxY;
+
+            const proposalText = letterContainer.querySelector('p');
+            
+            if (newY < proposalText.offsetHeight + 20) {
+                newY = proposalText.offsetHeight + 20 + Math.random() * (maxY - (proposalText.offsetHeight + 20));
+            }
+            
+            naoButton.style.position = 'absolute'; 
+            naoButton.style.left = `${newX}px`;
+            naoButton.style.top = `${newY}px`;
+
+            naoMessageBox.style.display = 'block';
+            naoMessageBox.style.position = 'absolute';
+            naoMessageBox.style.left = `${newX}px`;
+            naoMessageBox.style.top = `${newY + buttonRect.height + 5}px`; 
+            
+            clearTimeout(naoMessageTimeout); 
+            naoMessageTimeout = setTimeout(() => {
+                naoMessageBox.style.display = 'none';
+            }, 2500); 
+        }
+
+    </script>
+</body>
+</html>
